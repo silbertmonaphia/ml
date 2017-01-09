@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Results>
+    <Experiments noIterations="20" classNames="positiveClass negativeClass" growthSize="5 5" noSplits="1">
+        <experiment name="CoTraining">
+            <measure name="accuracy" microAveraged="77.7125" macroAveraged="77.7125" stdDev="10.746454518687651"/>
+        </experiment>
+    </Experiments>
+</Results>

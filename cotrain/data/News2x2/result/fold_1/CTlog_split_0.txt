@@ -1,0 +1,112 @@
+
+Starting co-training experiment for fold 1 split: 0
+View1: accuracy: 72.12; 
+View2: accuracy: 66.88; 
+Combined: accuracy: 74.75; 
+
+Classifiers after iteration: 1: 
+View1: accuracy: 76; 
+View2: accuracy: 66.25; 
+Combined: accuracy: 71.75; 
+
+Classifiers after iteration: 2: 
+View1: accuracy: 76.38; 
+View2: accuracy: 69.5; 
+Combined: accuracy: 76; 
+
+Classifiers after iteration: 3: 
+View1: accuracy: 82; 
+View2: accuracy: 76.25; 
+Combined: accuracy: 82.88; 
+
+Classifiers after iteration: 4: 
+View1: accuracy: 72.38; 
+View2: accuracy: 78.38; 
+Combined: accuracy: 79.38; 
+
+Classifiers after iteration: 5: 
+View1: accuracy: 74.38; 
+View2: accuracy: 79.88; 
+Combined: accuracy: 82.5; 
+
+Classifiers after iteration: 6: 
+View1: accuracy: 75.38; 
+View2: accuracy: 80.12; 
+Combined: accuracy: 84.12; 
+
+Classifiers after iteration: 7: 
+View1: accuracy: 78.88; 
+View2: accuracy: 80; 
+Combined: accuracy: 86.25; 
+
+Classifiers after iteration: 8: 
+View1: accuracy: 79.25; 
+View2: accuracy: 79.38; 
+Combined: accuracy: 86.12; 
+
+Classifiers after iteration: 9: 
+View1: accuracy: 81.88; 
+View2: accuracy: 78.75; 
+Combined: accuracy: 86.5; 
+
+Classifiers after iteration: 10: 
+View1: accuracy: 81.5; 
+View2: accuracy: 79.62; 
+Combined: accuracy: 87.62; 
+
+Classifiers after iteration: 11: 
+View1: accuracy: 81; 
+View2: accuracy: 81.12; 
+Combined: accuracy: 89; 
+
+Classifiers after iteration: 12: 
+View1: accuracy: 81.88; 
+View2: accuracy: 80.5; 
+Combined: accuracy: 89.5; 
+
+Classifiers after iteration: 13: 
+View1: accuracy: 81.12; 
+View2: accuracy: 80; 
+Combined: accuracy: 89.38; 
+
+Classifiers after iteration: 14: 
+View1: accuracy: 81.5; 
+View2: accuracy: 79.75; 
+Combined: accuracy: 89.25; 
+
+Classifiers after iteration: 15: 
+View1: accuracy: 83.5; 
+View2: accuracy: 79.12; 
+Combined: accuracy: 89.5; 
+
+Classifiers after iteration: 16: 
+View1: accuracy: 81.12; 
+View2: accuracy: 79.38; 
+Combined: accuracy: 88.12; 
+
+Classifiers after iteration: 17: 
+View1: accuracy: 81.5; 
+View2: accuracy: 79; 
+Combined: accuracy: 87.88; 
+
+Classifiers after iteration: 18: 
+View1: accuracy: 81.75; 
+View2: accuracy: 79.12; 
+Combined: accuracy: 87.5; 
+
+Classifiers after iteration: 19: 
+View1: accuracy: 82.12; 
+View2: accuracy: 79.5; 
+Combined: accuracy: 89.62; 
+
+Classifiers after iteration: 20: 
+View1: accuracy: 82.38; 
+View2: accuracy: 79; 
+Combined: accuracy: 89; 
+
+End accuracy: 
+View1: accuracy: 82.38; 
+View2: accuracy: 79; 
+Combined: accuracy: 89; 
+
+CT running time 159.56s
