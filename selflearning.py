@@ -53,7 +53,7 @@ class SelfLearningModel(BaseEstimator):
         -------
         self : returns an instance of self.
         """
-        unlabeledX = X[y==-1, :]
+        unlabeledX = X[y==-1, :]#what does it mean?
         labeledX = X[y!=-1, :]
         labeledy = y[y!=-1]
         
