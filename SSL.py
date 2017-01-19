@@ -11,9 +11,10 @@ from frameworks.SelfLearning import *
 
 #input the data
 
-X = [[0, 0], [1, 1]]
+X = 
 
-y = [0, 1]
+#
+y = -1
 
 
 #use SVM as the classifier
