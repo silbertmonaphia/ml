@@ -1,1 +1,0 @@
-result文件夹中的每个子文件夹（fold_i）分别是对所有样本的一次划分（2000个样本分为LabeledSet、UnlabeledSet、TestSet），共进行了10次划分（10个子文件夹），这就是10折交叉检验。
