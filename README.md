@@ -1,6 +1,7 @@
 #一.毕业设计主题  
 基于SSL的情感分析系统实现  
 [NLP-Sentiment analysis]  
+it's up to data to define a classfication criteria  
 
 #二.数据  
 京东牛奶评论.arff[tf-idf]  
@@ -43,9 +44,13 @@ docker[for machine learing]
 
 其实还是利用回刚才那些监督学习的分类器作为基础，向外套一层逻辑  
 
-**1.1Self-Training [完成度60%]**  
-最原始的半监督学习算法，但是容易学坏  
+**1.1Self-Training [完成度80%]**  
+最原始的半监督学习算法，但是容易学坏,压根没有改善，甚至出现更加差
+Assumption:
+One's own high confidence predictions are correct.
+
 其主要思路是首先利用小规模的标注样本训练出一个分类器，然后对未标注样本进行分类，挑选置信度(后验概率)最高的样本进行自动标注并且更新标注集，迭代式地反复训练分类器    
+
 ![Self-Training](SelfTraining.png)  
 
 **1.2Co-Training [?]**  

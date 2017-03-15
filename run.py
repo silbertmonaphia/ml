@@ -97,7 +97,7 @@ if __name__ == '__main__':
         # ssl_slm_dtc = SelfLearningModel(clf_DTC)
         # ssl_slm_dtc.fit(X_labeled, y_labeled, X_unlabeled)
         # print ssl_slm_dtc.score(X_test, y_test)
-        # # 0.7259
+        # 0.7259
 
     if ct is True:
         pass
