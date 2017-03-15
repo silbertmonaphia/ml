@@ -5,9 +5,8 @@ from scipy.io import arff
 from sklearn.cross_validation import train_test_split
 
 from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier 
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
-from sklearn.semi_supervised
+from sklearn.tree import DecisionTreeClassifier
 
 from selflearning import SelfLearningModel
 from cotraining.classifiers import CoTrainingClassifier
@@ -26,7 +25,7 @@ def ass_SL_clf(classifier, X_test, y_test):
 
 
 if __name__ == '__main__':
-    
+
     # feature[[],[]]
     X = []
     # tag['pos','neg']
@@ -36,48 +35,73 @@ if __name__ == '__main__':
     with open("./text/JDMilk.arff", 'rb') as f:
         data, meta = arff.loadarff(f)
         for line in data:
-            y.append(line[-1])
+            if line[-1] == 'pos':
+                y.append(1)
+            else:
+                y.append(0)
+
             line = list(line)
             line.pop()
             X.append(line)
 
+    # 交叉验证
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.3, random_state=42)
 
+    X_unlabeled, X_labeled, y_unlebeled, y_labeled = train_test_split(
+        X_train, y_train, test_size=0.1, random_state=42)
+
     # SL
-    clf_SVM = SVC()
-    clf_GNB = GaussianNB()
-    clf_MNB = MultinomialNB()
-    clf_BNB = BernoulliNB()
-    clf_DTC = DecisionTreeClassifier()
+    print 'start testing SL'
 
-    test = True
+    sl = False
+    st = True
+    ct = False
 
-    if test == True:
+    if sl is True:
 
-        clf_SVM.fit(X_train, y_train)
-        clf_GNB.fit(X_train, y_train)
-        clf_MNB.fit(X_train, y_train)
-        clf_BNB.fit(X_train, y_train)
-        clf_DTC.fit(X_train, y_train)
-        print 'Train Over \n'
+        clf_SVM = SVC()
+        clf_MNB = MultinomialNB()
+        clf_DTC = DecisionTreeClassifier()
+        clf_SVM.fit(X_labeled, y_labeled)
+        clf_MNB.fit(X_labeled, y_labeled)
+        clf_DTC.fit(X_labeled, y_labeled)
+        print 'Train Over'
 
-        ass_SL_clf(clf_SVM, X_test, y_test)  # 0.8148
-        ass_SL_clf(clf_GNB, X_test, y_test)  # 0.7056
-        ass_SL_clf(clf_MNB, X_test, y_test)  # 0.85
-        ass_SL_clf(clf_BNB, X_test, y_test)  # 0.8926
-        ass_SL_clf(clf_DTC, X_test, y_test)  # 0.8296
+        ass_SL_clf(clf_SVM, X_test, y_test)  # 0.7259
+        ass_SL_clf(clf_MNB, X_test, y_test)  # 0.7833
+        ass_SL_clf(clf_DTC, X_test, y_test)  # 0.7389
+        print 'Base Classifier Test Over'
 
-        print '\nBase Classifier Test Over \n'
+    if st is True:
+        pass
 
-    else:
         # SSL
-        
-        # Self-Training
-        ssl_slm_svm = SelfLearningModel(clf_SVM)
-        ssl_slm_svm.fit(X_train, y_train)
-        print ssl_svm.predict(X_test)
+        print 'start testing SSL-SelfLearning'
 
+        # Self-Training
+
+        clf_SVM = SVC(probability=True)  #svm has to turn on probability parameter
+        ssl_slm_svm = SelfLearningModel(clf_SVM)
+        ssl_slm_svm.fit(X_labeled, y_labeled, X_unlabeled)
+        print ssl_slm_svm.score(X_test, y_test)
+        # 0.5648
+
+        # clf_MNB = MultinomialNB()
+        # ssl_slm_mnb = SelfLearningModel(clf_MNB)
+        # ssl_slm_mnb.fit(X_labeled, y_labeled, X_unlabeled)
+        # print ssl_slm_mnb.score(X_test, y_test)
+        # # 0.7981
+
+        # clf_DTC = DecisionTreeClassifier()
+        # ssl_slm_dtc = SelfLearningModel(clf_DTC)
+        # ssl_slm_dtc.fit(X_labeled, y_labeled, X_unlabeled)
+        # print ssl_slm_dtc.score(X_test, y_test)
+        # # 0.7259
+
+    if ct is True:
+        pass
         # Co-Training
+
         # ssl_ctc_svm_mnb = CoTrainingClassifier(clf_SVM,clf_MNB)
         # ssl_ctc_svm_mnb.fit(X)
