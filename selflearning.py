@@ -34,8 +34,9 @@ class SelfLearningModel(BaseEstimator):
             uidx = numpy.where((unlabeledprob[:, 0] > self.prob_threshold) | (unlabeledprob[:, 1] > self.prob_threshold))
             uidx=uidx[0]#in order to transform tuple to numpy.ndarray
 
-            print X_unlabeled[uidx, :].shape
+            #print X_unlabeled[uidx, :].shape
 
+            #this implementation of SelfTraining Alg is a little different from the general one
             self.model.fit(numpy.vstack( (X_labeled, X_unlabeled[uidx, :]) ), numpy.hstack((y_labeled, y_unlabeled_old[uidx])))
 
             #when to remove X_unlabeled[uidx, :] and y_unslabeled_old[uidx] from X_unlabeled and y_unlabeled???
