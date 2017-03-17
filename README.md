@@ -1,5 +1,5 @@
 #一.毕业设计主题  
-基于SSL的情感分析系统实现  
+基于半监督学习和集成学习的情感分析研究 
 [NLP-Sentiment analysis]  
 it's up to data to define a classfication criteria  
 
@@ -33,7 +33,7 @@ docker[for machine learing]
 #五.算法  
 
 ##0.监督学习(SL)的分类器选择  
-[Baseline]
+[Baseline]  
 选择标准:能够输出后验概率的  
 0.1支持向量机(SVC)  
 准确率:0.8148  
@@ -41,8 +41,7 @@ docker[for machine learing]
 准确率:0.85  
 0.3决策树(DecisionTreeClassifier)  
 准确率:0.8241  
-0.4最大熵
-0.5
+0.4最大熵(Maximum Entropy)[optianal]
 
 ##1.半监督学习(SSL)  
 
@@ -55,15 +54,17 @@ Assumption:One's own high confidence predictions are correct.
 ![Self-Training](./pic/SelfTraining.png)  
 
 **1.2Co-Training**  
-特点：针对多视图数据，从不同视图(角度)思考问题
+特点：针对多视图数据，从不同视图(角度)思考问题，基于分歧  
 Rule#1:样本可以由两个或多个冗余的条件独立视图表示  
 Rule#2:每个视图都能从训练样本中得到一个强分类器  
 
-**1.3Random Subspace SelfTraing(SelfTraingFS)**  
-![Random Subspace SelfTraing](./pic/Random Subspace SelfTraing.png)  
+**1.3Label Propagation**  
+![基于二部图的标记传播算法](./pic/Label Propagation.png)  
 
-**1.4Label Propagation**  
-![基于二部图的标签传播算法](./pic/Label Propagation.png)  
+**1.4Random Subspace**  
+①SelfTraing + Random Subspace  
+![Random Subspace SelfTraing](./pic/Random Subspace SelfTraing.png)  
+②Co-Training + Random Subspace  
 
 ##2.集成学习  
 2.1Tri-Training  

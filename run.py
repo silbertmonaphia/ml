@@ -24,8 +24,7 @@ def ass_SL_clf(classifier, X_test, y_test):
     return accuracy
 
 
-if __name__ == '__main__':
-
+def loadData():
     # feature[[],[]]
     X = []
     # tag['pos','neg']
@@ -44,6 +43,12 @@ if __name__ == '__main__':
             line.pop()
             X.append(line)
 
+    return X, y
+
+
+if __name__ == '__main__':
+
+    X, y = loadData()
     # 交叉验证
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.3, random_state=42)
@@ -54,11 +59,11 @@ if __name__ == '__main__':
     # SL
     print 'start testing SL'
 
-    sl = False
-    st = True
-    ct = False
+    baseline = False
+    selftraining = False
+    cotraining = False
 
-    if sl is True:
+    if baseline is True:
 
         clf_SVM = SVC()
         clf_MNB = MultinomialNB()
@@ -72,16 +77,15 @@ if __name__ == '__main__':
         ass_SL_clf(clf_MNB, X_test, y_test)  # 0.7833
         ass_SL_clf(clf_DTC, X_test, y_test)  # 0.7389
         print 'Base Classifier Test Over'
+    
+    #SSL
+    if selftraining is True:
 
-    if st is True:
-        pass
-
-        # SSL
+        # SSL-SSL-SelfLearning
         print 'start testing SSL-SelfLearning'
 
-        # Self-Training
-
-        clf_SVM = SVC(probability=True)  #svm has to turn on probability parameter
+        # svm has to turn on probability parameter
+        clf_SVM = SVC(probability=True)
         ssl_slm_svm = SelfLearningModel(clf_SVM)
         ssl_slm_svm.fit(X_labeled, y_labeled, X_unlabeled)
         print ssl_slm_svm.score(X_test, y_test)
@@ -99,9 +103,9 @@ if __name__ == '__main__':
         # print ssl_slm_dtc.score(X_test, y_test)
         # 0.7259
 
-    if ct is True:
-        pass
-        # Co-Training
+    if cotraining is True:
 
+        # SSL-Co-Training
+        print 'start testing SSL-Co-Training'
         # ssl_ctc_svm_mnb = CoTrainingClassifier(clf_SVM,clf_MNB)
         # ssl_ctc_svm_mnb.fit(X)
