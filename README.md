@@ -72,7 +72,7 @@ Rule#2:每个视图都能从训练样本中得到一个强分类器
 
 **RamdomSubspaces方法:**  
 for improving  weak classifiers
-①来自王娇博士文献  
+①来自王娇博士文献叙述  
 假设原数据特征空间为n维 ,随机子空间为 m 维 ,满足 m < n.设标记数据集有l个数据,即| L| = l. 对任意 p ∈ L ,可写成 p = (p1 , p2 , …, pn),将p投影到这m维张成的空间中 ,得到的向量可写成 psub = ( ps1 , ps2 , …, psm)由所有 l 个 psub组成的向量集合Lsub ,就是标记数据集L在其 m维随机子空间中的投影. 重复此过程 K次 ,得到数据特征空间的 K个不同视图,Lsubk(1 ≤k ≤K)  
 Q:还是没有说清楚投影(切分)和随机这两者怎么实现?
 
@@ -82,9 +82,7 @@ Q:还是没有说清楚投影(切分)和随机这两者怎么实现?
 3.For each individual model l, choose dl (dl < D) to be the number of input variables for l. It is common to have only one value of dl for all the individual models.  
 4.For each individual model l, create a training set by choosing dl features from D with replacement and train the model.  
 
-③Bootstrap Method(Bagging):
-numpy.random()
-
+③出处Tin Kam Ho的<The Random Subspace Method forConstructing Decision Forests>
 
 **1.1Self-Training + RamdomSubspaces**  
 
