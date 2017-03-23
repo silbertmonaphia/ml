@@ -12,7 +12,7 @@ from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
 from sklearn.tree import DecisionTreeClassifier
 
 from selflearning import SelfLearningModel
-from cotraining.classifiers import CoTrainingClassifier
+from cotraining import CoTrainingClassifier
 
 
 def loadData(filepath):
