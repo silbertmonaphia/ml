@@ -1,0 +1,165 @@
+#######TF
+# 0 test 
+
+start testing baseline
+Train Over
+0.6725
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.73125
+# 1 test 
+
+start testing baseline
+Train Over
+0.6425
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.50125
+# 2 test 
+
+start testing baseline
+Train Over
+0.64625
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.7875
+# 3 test 
+
+start testing baseline
+Train Over
+0.72375
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.825
+# 4 test 
+
+start testing baseline
+Train Over
+0.75375
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.82375
+# 5 test 
+
+start testing baseline
+Train Over
+0.71875
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.825
+# 6 test 
+
+start testing baseline
+Train Over
+0.7175
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.8425
+# 7 test 
+
+start testing baseline
+Train Over
+0.75
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.79375
+# 8 test 
+
+start testing baseline
+Train Over
+0.755
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.83875
+# 9 test 
+
+start testing baseline
+Train Over
+0.7325
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.85375
+
+
+###############TF-IDF
+# 0 test 
+
+start testing baseline
+Train Over
+0.70125
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.70125
+# 1 test 
+
+start testing baseline
+Train Over
+0.6425
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.5
+# 2 test 
+
+start testing baseline
+Train Over
+0.64625
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.49875
+# 3 test 
+
+start testing baseline
+Train Over
+0.66
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.66
+# 4 test 
+
+start testing baseline
+Train Over
+0.7
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.5
+# 5 test 
+
+start testing baseline
+Train Over
+0.63875
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.63875
+# 6 test 
+
+start testing baseline
+Train Over
+0.6925
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.50125
+# 7 test 
+
+start testing baseline
+Train Over
+0.72375
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.49875
+# 8 test 
+
+start testing baseline
+Train Over
+0.67125
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.49875
+# 9 test 
+
+start testing baseline
+Train Over
+0.64625
+Base Classifier Test Over
+start testing SSL-SelfTraining
+0.5
+
