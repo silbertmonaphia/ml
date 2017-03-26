@@ -46,5 +46,6 @@ class SelfLearningModel(BaseEstimator):
 
         return self
 
-    def score(self, X, y):
-        return sklearn.metrics.accuracy_score(y, self.model.predict(X))
+    def predict(self, X):
+        predict = self.model.predict(X)
+        return predict

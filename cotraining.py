@@ -5,19 +5,6 @@ import logging
 from numpy.random import shuffle
 import os
 
-
-def random_subspace(X):
-
-    n = X.shape[1]
-    m = n // 2
-    X_T = X.T
-    shuffle(X_T)
-    X_T_shuffled_T = X_T.T
-    X_view = X_T_shuffled_T[:, :m]
-
-    return X_view
-
-
 class CoTrainingClassifier(object):
 
     def __init__(self, clf, clf2=None, p=-1, n=-1, k=30, u=75):
@@ -77,13 +64,12 @@ class CoTrainingClassifier(object):
         while iteration != self.k_ and X_unlabeled.size != 0:
 
             iteration += 1
-
             logging.info("Random_Subspace\n") 
-            X_labeled_view1 = random_subspace(X_labeled)
-            X_labeled_view2 = random_subspace(X_labeled)
+            X_labeled_view1 = self.random_subspace(X_labeled)
+            X_labeled_view2 = self.random_subspace(X_labeled)
 
-            X_unlabeled_view1 = random_subspace(X_unlabeled_prime)
-            X_unlabeled_view2 = random_subspace(X_unlabeled_prime)
+            X_unlabeled_view1 = self.random_subspace(X_unlabeled_prime)
+            X_unlabeled_view2 = self.random_subspace(X_unlabeled_prime)
 
             logging.info("training the clf for the 1st time with labeled data(view)")
             self.clf1_.fit(X_labeled_view1, y_labeled)
@@ -134,23 +120,16 @@ class CoTrainingClassifier(object):
         self.clf1_.fit(X_labeled, y_labeled)
         self.clf2_.fit(X_labeled, y_labeled)
 
+    def random_subspace(self,X):
+        n = X.shape[1]
+        m = n // 2
+        X_T = X.T
+        shuffle(X_T)
+        X_T_shuffled_T = X_T.T
+        X_view = X_T_shuffled_T[:, :m]
+        return X_view
 
-    def predict(self, X):  # why do we still have to divide the test set into 2 dimension of the feature?
-
-        y_pred = self.clf1_.predict(X)
-        return y_pred
-
-    def predict_proba(self, X1, X2):
-        """Predict the probability of the samples belonging to each class."""
-        y_proba = np.full((X1.shape[0], 2), -1)
-
-        y1_proba = self.clf1_.predict_proba(X1)
-        y2_proba = self.clf2_.predict_proba(X2)
-
-        for i, (y1_i_dist, y2_i_dist) in enumerate(zip(y1_proba, y2_proba)):
-            y_proba[i][0] = (y1_i_dist[0] + y2_i_dist[0]) / 2
-            y_proba[i][1] = (y1_i_dist[1] + y2_i_dist[1]) / 2
-
-        _epsilon = 0.0001
-        assert all(abs(sum(y_dist) - 1) <= _epsilon for y_dist in y_proba)
-        return y_proba
+    def predict(self, X):
+        y_pred_clf1 = self.clf1_.predict(X)
+        y_pred_clf2 = self.clf2_.predict(X)
+        return y_pred_clf1,y_pred_clf2

@@ -3,12 +3,15 @@
 
 import numpy as np
 import random
+
 from scipy.io import arff
-from sklearn.cross_validation import train_test_split
-from sklearn.metrics import classification_report
+from sklearn.cross_validation import StratifiedKFold  # balanced better!
+from sklearn.cross_validation import train_test_split  # not balanced
+from sklearn import metrics
+import matplotlib.pyplot as plt
 
 from sklearn.svm import SVC
-from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.tree import DecisionTreeClassifier
 
 from selflearning import SelfLearningModel
@@ -42,100 +45,151 @@ def loadData(filepath):
 
 def cross_validation(X, y):
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.3, random_state=42)
+    skf1 = StratifiedKFold(y, n_folds=4)
+    for train_index, test_index in skf1:
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = y[train_index], y[test_index]
 
-    X_unlabeled, X_labeled, y_unlebeled, y_labeled = train_test_split(
-        X_train, y_train, test_size=0.1, random_state=42)
+        skf2 = StratifiedKFold(y_train, n_folds=75)
+        for unlabeled_index, labeled_index in skf2:
+            X_unlabeled, X_labeled = X[unlabeled_index], X[labeled_index]
+            y_unlabeled, y_labeled = y[unlabeled_index], y[labeled_index]
+            break
 
-    return X_labeled, y_labeled, X_unlabeled, X_test, y_test
+        yield X_labeled, y_labeled, X_unlabeled, X_test, y_test
 
 
-def ass_baseline(classifier, X_test, y_test):
+def evaluation(y_test, predict, accuracyonly=True):
 
-    point = 0
-    prediction = classifier.predict(X_test)
-    for i in range(len(prediction)):
-        if y_test[i] == prediction[i]:
-            point += 1
-    accuracy = float(point) / float(len(prediction))
+    accuracy = metrics.accuracy_score(y_test, predict)
+    if not accuracyonly:
+        # can print out precision recall and f1
+        print metrics.classification_report(y_test, predict)
     return accuracy
+
+
+def plot():
+    plt.plot([1, 2, 3, 4])
+    plt.ylabel('some numbers')
+    plt.show()
 
 
 def test_baseline(X_labeled, y_labeled, X_test, y_test):
 
-    print 'start testing baseline :/'
-    clf_SVM = SVC()
-    clf_DTC = DecisionTreeClassifier()
     clf_MNB = MultinomialNB()
-    
-    clf_SVM.fit(X_labeled, y_labeled)
-    clf_DTC.fit(X_labeled, y_labeled)
-    clf_MNB.fit(X_labeled, y_labeled)
-    print 'Train Over'
+    clf_SVM = SVC(probability=True)
+    clf_DTC = DecisionTreeClassifier()
+    print '\nstart testing baseline :/'
 
-    print ass_baseline(clf_SVM, X_test, y_test)  # 0.7259
-    print ass_baseline(clf_DTC, X_test, y_test)  # 0.7389
-    print ass_baseline(clf_MNB, X_test, y_test)  # 0.7833
-    print 'Base Classifier Test Over'
+    print 'naive bayes'
+    clf_MNB.fit(X_labeled, y_labeled)
+    predict = clf_MNB.predict(X_test)
+    accuracy_bl_mnb = evaluation(y_test, predict)
+
+    print 'svm'
+    clf_SVM.fit(X_labeled, y_labeled)
+    predict = clf_SVM.predict(X_test)
+    accuracy_bl_svm = evaluation(y_test, predict)
+
+    print 'decision tree'
+    clf_DTC.fit(X_labeled, y_labeled)
+    predict = clf_DTC.predict(X_test)
+    accuracy_bl_dtc = evaluation(y_test, predict)
+
+    return accuracy_bl_mnb, accuracy_bl_svm, accuracy_bl_dtc
 
 
 def test_selftraing(X_labeled, y_labeled, X_unlabeled, X_test, y_test):
 
     # SSL-SelfTraining
-    print 'start testing SSL-SelfTraining :D'
-
-    # svm has to turn on probability parameter
-    clf_SVM = SVC(probability=True)
-    ssl_slm_svm = SelfLearningModel(clf_SVM)
-    ssl_slm_svm.fit(X_labeled, y_labeled, X_unlabeled)
-    print ssl_slm_svm.score(X_test, y_test)
-    # 0.5648
-
-    clf_DTC = DecisionTreeClassifier()
-    ssl_slm_dtc = SelfLearningModel(clf_DTC)
-    ssl_slm_dtc.fit(X_labeled, y_labeled, X_unlabeled)
-    print ssl_slm_dtc.score(X_test, y_test)
-    # 0.7259
-
     clf_MNB = MultinomialNB()
+    clf_SVM = SVC(probability=True)
+    clf_DTC = DecisionTreeClassifier()
+
+    print '\nstart testing SSL-SelfTraining :D'
+
+    print 'naive bayes'
     ssl_slm_mnb = SelfLearningModel(clf_MNB)
     ssl_slm_mnb.fit(X_labeled, y_labeled, X_unlabeled)
-    print ssl_slm_mnb.score(X_test, y_test)
-    # 0.7981
+    predict = ssl_slm_mnb.predict(X_test)
+    accuracy_sf_mnb = evaluation(y_test, predict)
+
+    # svm has to turn on probability parameter
+    print 'svm'
+    ssl_slm_svm = SelfLearningModel(clf_SVM)
+    ssl_slm_svm.fit(X_labeled, y_labeled, X_unlabeled)
+    predict = ssl_slm_svm.predict(X_test)
+    accuracy_sf_svm = evaluation(y_test, predict)
+
+    print 'decision tree'
+    ssl_slm_dtc = SelfLearningModel(clf_DTC)
+    ssl_slm_dtc.fit(X_labeled, y_labeled, X_unlabeled)
+    predict = ssl_slm_dtc.predict(X_test)
+    accuracy_sf_dtc = evaluation(y_test, predict)
+
+    return accuracy_sf_mnb, accuracy_sf_svm, accuracy_sf_dtc
 
 
 def test_cotraining(X_labeled, y_labeled, X_unlabeled, X_test, y_test):
 
     # SSL-Co-Training
-    print 'start testing SSL-CoTraining :)'
+    print '\nstart testing SSL-CoTraining :)'
 
     clf_SVM = SVC(probability=True)
     clf_DTC = DecisionTreeClassifier()
     clf_MNB = MultinomialNB()
 
-    #an object is a class with status,it has memories
-    ssl_ctc_svm = CoTrainingClassifier(clf_SVM)
-    ssl_ctc_svm.fit(X_labeled,y_labeled,X_unlabeled)
-    print ass_baseline(ssl_ctc_svm,X_test,y_test)
-
-    ssl_ctc_dtc = CoTrainingClassifier(clf_DTC)
-    ssl_ctc_dtc.fit(X_labeled,y_labeled,X_unlabeled)
-    print ass_baseline(ssl_ctc_dtc,X_test,y_test)
-
+    print 'naive bayes'
     ssl_ctc_mnb = CoTrainingClassifier(clf_MNB)
-    ssl_ctc_mnb.fit(X_labeled,y_labeled,X_unlabeled)
-    print ass_baseline(ssl_ctc_mnb,X_test,y_test)
+    ssl_ctc_mnb.fit(X_labeled, y_labeled, X_unlabeled)
+    predict_clf1, predict_clf2 = ssl_ctc_mnb.predict(X_test)
+    accuracy_co_mnb = evaluation(y_test, predict_clf1)
 
-    
+    # an object is a class with status,it has memories
+    print 'svm'
+    ssl_ctc_svm = CoTrainingClassifier(clf_SVM)
+    ssl_ctc_svm.fit(X_labeled, y_labeled, X_unlabeled)
+    predict_clf1, predict_clf2 = ssl_ctc_svm.predict(X_test)
+    accuracy_co_svm = evaluation(y_test, predict_clf1)
+
+    print 'decision tree'
+    ssl_ctc_dtc = CoTrainingClassifier(clf_DTC)
+    ssl_ctc_dtc.fit(X_labeled, y_labeled, X_unlabeled)
+    predict_clf1, predict_clf2 = ssl_ctc_dtc.predict(X_test)
+    accuracy_co_dtc = evaluation(y_test, predict_clf1)
+
+    return accuracy_co_mnb, accuracy_co_svm, accuracy_co_dtc
+
+
 if __name__ == '__main__':
+
+    # the number of experitments
+    experitments = 3
 
     # load arff file as X,y ndarray like
     X, y = loadData('./text/JDMilk.arff')
 
-    # Cross validation for 10 times,and compute the average of accuracy
-    X_labeled, y_labeled, X_unlabeled, X_test, y_test = cross_validation(X, y)
+    # labeled 1%,unlabeled 74%,test 25%
+    cv_generator = cross_validation(X, y)
 
-    test_baseline(X_labeled, y_labeled, X_test, y_test)
-    test_selftraing(X_labeled, y_labeled, X_unlabeled, X_test, y_test)
-    test_cotraining(X_labeled, y_labeled, X_unlabeled, X_test, y_test)
+    accuracy_bl = np.zeros((0, 3))
+    accuracy_sf = np.zeros((0, 3))
+    accuracy_co = np.zeros((0, 3))
+
+    # Cross validation for 10 times,and compute the average of accuracy
+    for i in range(experitments):
+        print '=' * 10, str(i), 'time'
+        X_labeled, y_labeled, X_unlabeled, X_test, y_test = cv_generator.next()
+        accuracy_bl = np.vstack((accuracy_bl, np.asarray(test_baseline(X_labeled, y_labeled, X_test, y_test))))
+        #accuracy_sf = np.vstack((accuracy_sf, np.asarray(test_selftraing(X_labeled, y_labeled, X_unlabeled, X_test, y_test))))
+        accuracy_co = np.vstack((accuracy_co, np.asarray(test_cotraining(X_labeled, y_labeled, X_unlabeled, X_test, y_test))))
+
+
+    print '\n.... final static average ....\n'
+    clfs = ['mnb', 'svm', 'dtc']
+    for i,clf in enumerate(clfs):
+        print clf
+        print 'baseline: ',sum(accuracy_bl[:,i])/float(len(accuracy_bl[:,i]))
+        #print 'selftraining: ',sum(accuracy_sf[:,i])/float(len(accuracy_sf[:,i]))
+        print 'cotraining: ',sum(accuracy_co[:,i])/float(len(accuracy_co[:,i]))
+   

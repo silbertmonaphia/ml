@@ -31,7 +31,9 @@ var/
 *.spec
 
 # Installer logs
+*.xlsx
 pip-log.txt
+*.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
@@ -87,3 +89,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+
+*.doc
+*.docx
+*.ppt
+*.pptx
