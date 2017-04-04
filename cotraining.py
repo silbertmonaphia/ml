@@ -1,7 +1,6 @@
 import numpy as np
 import random
 import copy
-import logging
 from numpy.random import shuffle
 import os
 
@@ -27,8 +26,6 @@ class CoTrainingClassifier(object):
         self.k_ = k
         self.u_ = u
 
-        random.seed()
-
     def fit(self, X_labeled, y_labeled, X_unlabeled):
 
         if self.p_ == -1 and self.n_ == -1:
@@ -44,68 +41,82 @@ class CoTrainingClassifier(object):
             else:
                 self.n_ = 1
                 self.p_ = int(round(self.n_ / n_p_ratio))
-
-        logging.info('n_ is',self.n_,'p_ is',self.p_) 
+        #n_=1 p_=2
+        print 'n_ is',self.n_,'p_ is',self.p_
 
         assert(self.p_ > 0 and self.n_ > 0 and self.k_ > 0 and self.u_ > 0)
 
         # recreate y_unlabeled
         y_unlabeled = np.full(len(X_unlabeled), -1)
 
-        # this is U' in paper[1st time]
+        # [1st time]this is U' in paper
         X_unlabeled_prime = X_unlabeled[-min(len(X_unlabeled), self.u_):, :]
         y_unlabeled_prime = y_unlabeled[-min(len(y_unlabeled), self.u_):]
 
-        # remove the samples in U' from U[1st time]
+        # [1st time]remove the samples in U' from U
         X_unlabeled = X_unlabeled[:-len(X_unlabeled_prime), :]
         y_unlabeled = y_unlabeled[:-len(y_unlabeled_prime)]
+
 
         iteration = 0  # number of cotraining iterations we've done so far
         while iteration != self.k_ and X_unlabeled.size != 0:
 
+            print 'iteration',iteration
             iteration += 1
-            logging.info("Random_Subspace\n") 
-            X_labeled_view1 = self.random_subspace(X_labeled)
-            X_labeled_view2 = self.random_subspace(X_labeled)
 
-            X_unlabeled_view1 = self.random_subspace(X_unlabeled_prime)
-            X_unlabeled_view2 = self.random_subspace(X_unlabeled_prime)
+            print "Random_Subspace\n"
 
-            logging.info("training the clf for the 1st time with labeled data(view)")
+            length = len(X_labeled)
+            X_train = np.vstack((X_labeled,X_unlabeled_prime))
+            X_train_view1 = self.random_subspace(X_train)
+            X_train_view2 = self.random_subspace(X_train)
+            X_labeled_view1 = X_train_view1[:length,:]
+            X_unlabeled_view1 = X_train_view1[length:,:]
+            X_labeled_view2 = X_train_view2[:length,:]
+            X_unlabeled_view2 = X_train_view2[length:,:]
+
+            print "training the clfs with labeled data(view)"
             self.clf1_.fit(X_labeled_view1, y_labeled)
             self.clf2_.fit(X_labeled_view2, y_labeled)
 
+            print "training the clfs with unlabeled data(view)"
             y1 = self.clf1_.predict_proba(X_unlabeled_view1)
             y2 = self.clf2_.predict_proba(X_unlabeled_view2)
 
-            n, p = [], []
+            n_index, p_index = [], []
 
             #to get the n(or p) best negative example's index in y,and put them into the list n(or p)
-            p.extend(y1[:,0].argsort()[-self.n_:][::-1])
-            n.extend(y1[:,1].argsort()[-self.p_:][::-1])
-            p.extend(y2[:,0].argsort()[-self.n_:][::-1])
-            n.extend(y2[:,1].argsort()[-self.p_:][::-1])
+            n_index_v1 = y1[:,0].argsort()[-self.n_:][::-1]
+            p_index_v1 = y1[:,1].argsort()[-self.p_:][::-1]
+            n_index_v2 = y2[:,0].argsort()[-self.n_:][::-1]
+            p_index_v2 = y2[:,1].argsort()[-self.p_:][::-1]
 
-            logging.info("label the p and n samples of U'\n") 
-            y_unlabeled_prime[[x for x in p]] = 1
-            y_unlabeled_prime[[x for x in n]] = 0
+            n_index.extend(n_index_v1)
+            n_index.extend(n_index_v2)
+            p_index.extend(p_index_v1)
+            p_index.extend(p_index_v2)
+            
 
-            logging.info("take those labeled samples out of U' and reform a new set U'' \n") 
+            print "label the p and n samples of U'\n"
+            y_unlabeled_prime[[x for x in p_index]] = 1
+            y_unlabeled_prime[[x for x in n_index]] = 0
+
+            print "take those labeled samples out of U' and reform a new set U'' \n"
             id_ = np.where(y_unlabeled_prime != -1)[0]
             X_extent = X_unlabeled_prime[id_, :]
             y_extent = y_unlabeled_prime[id_]
 
-            logging.info("enlarge the previous L with U'' \n") 
+            print "enlarge the previous L with U'' \n"
             X_labeled = np.vstack((X_labeled, X_extent))
             y_labeled = np.hstack((y_labeled, y_extent))
 
-            logging.info("remove p and n samples from U'\n") 
-            p_old = p
-            p.extend(n)
-            X_unlabeled_prime = np.delete(X_unlabeled_prime, p, axis=0)
+            print "remove p and n samples from U'\n"
+            p_old = p_index
+            p_index.extend(n_index)
+            X_unlabeled_prime = np.delete(X_unlabeled_prime, p_index, axis=0)
 
-            logging.info("add new elements(2p+2n) to U'\n") 
-            num_to_add = len(p_old) + len(n)
+            print "add new elements(2p+2n) to U'\n"
+            num_to_add = len(p_old) + len(n_index)
             if X_unlabeled.size != 0:
                 shuffle(X_unlabeled)
                 #shuffle(y_unlabeled)
@@ -116,9 +127,8 @@ class CoTrainingClassifier(object):
                 X_unlabeled = X_unlabeled[:num_to_add, :]
                 y_unlabeled = y_unlabeled[:num_to_add]
 
-        logging.info("final training\n") 
+        print "final training\n"
         self.clf1_.fit(X_labeled, y_labeled)
-        self.clf2_.fit(X_labeled, y_labeled)
 
     def random_subspace(self,X):
         n = X.shape[1]
@@ -131,5 +141,4 @@ class CoTrainingClassifier(object):
 
     def predict(self, X):
         y_pred_clf1 = self.clf1_.predict(X)
-        y_pred_clf2 = self.clf2_.predict(X)
-        return y_pred_clf1,y_pred_clf2
+        return y_pred_clf1

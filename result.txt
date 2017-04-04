@@ -14,3 +14,8 @@ start testing SSL-CoTraining :)
 0.503703703704
 0.462962962963
 
+
+#for the 2nd set up
+baseline:  0.571111111111
+selftraining:  0.615
+

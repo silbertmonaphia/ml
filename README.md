@@ -5,7 +5,6 @@ it's up to data to define a classfication criteria
 
 #二.数据  
 京东牛奶评论.arff[tf-idf]  
-谭松坡的酒店，笔记本，书语料.csv[tf-idf]  
 
 --对于baseline  
 7%作为训练集[X_train,y_train]  
@@ -26,7 +25,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 X_unlabeled, X_labeled, y_unlebeled, y_labeled = train_test_split(X_train, y_train, test_size=0.1, random_state=42)  
 
 #三.测试标准  
-准确率
+准确率(Accuracy)
 
 #四.工具  
 python2.7   
@@ -42,9 +41,6 @@ docker[for machine learing]
 准确率:0.8148  
 0.2朴素贝叶斯－多项式分布假设(MultinomialNB)  
 准确率:0.85  
-0.3决策树(DecisionTreeClassifier)  
-准确率:0.8241  
-0.4最大熵(Maximum Entropy)[optianal]
 
 ##1.半监督学习(SSL)  
 
@@ -89,9 +85,6 @@ Q:还是没有说清楚投影(切分)和随机这两者怎么实现?
 ③出处Tin Kam Ho的《The Random Subspace Method forConstructing Decision Forests》
 
 **1.1Self-Training + RamdomSubspaces**  
-
-**1.4Label Propagation**  
-![基于二部图的标记传播算法](./pic/Label Propagation.png)  
 
 ##2.集成学习  
 2.1Tri-Training  

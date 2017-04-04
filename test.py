@@ -6,9 +6,10 @@ from sklearn.cross_validation import StratifiedKFold
 
 
 X_unlabeled_prime = np.arange(30).reshape(10, -1)
-# print X_unlabeled_prime,'\n'
+print X_unlabeled_prime.size
 
-# y_unlebeled_prime = np.array([-1,-1,-1,-1,-1,-1,-1,-1,-1,-1])
+y_unlebeled_prime = np.array([-1,-1,-1,-1,-1,-1,-1,-1,-1,-1])
+print y_unlebeled_prime.size
 
 # p=[1,3,4,5]
 # n=[2,6,7,9]
@@ -54,6 +55,7 @@ X_unlabeled_prime = np.arange(30).reshape(10, -1)
 # print sum(a)
 # print sum(a)/float(len(a))
 
-a=np.zeros((0,3))
-np.vstack()
-print a.shape
+# a=[1,2,3,4]
+# b=[0,0,0]
+# a.extend(b)
+# print a 
