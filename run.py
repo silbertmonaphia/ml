@@ -124,7 +124,7 @@ def test_cotraining(X_labeled, y_labeled, X_unlabeled, X_test, y_test):
 if __name__ == '__main__':
 
     # the number of experitments
-    experitments = 1
+    experitments = 4
 
     # the classifiers that we use
     clfs = ['svm']
@@ -149,8 +149,8 @@ if __name__ == '__main__':
         X_labeled, y_labeled, X_unlabeled, X_test, y_test = cv_generator.next()
 
         accuracy_bl = np.vstack((accuracy_bl, np.asarray(test_baseline(X_labeled, y_labeled, X_test, y_test))))
-        accuracy_sf = np.vstack((accuracy_sf, np.asarray(test_selftraing(X_labeled, y_labeled, X_unlabeled, X_test, y_test))))
-        #accuracy_co = np.vstack((accuracy_co, np.asarray(test_cotraining(X_labeled, y_labeled, X_unlabeled, X_test, y_test))))
+        #accuracy_sf = np.vstack((accuracy_sf, np.asarray(test_selftraing(X_labeled, y_labeled, X_unlabeled, X_test, y_test))))
+        accuracy_co = np.vstack((accuracy_co, np.asarray(test_cotraining(X_labeled, y_labeled, X_unlabeled, X_test, y_test))))
 
 
     print '\n.... final static average ....\n'
@@ -158,5 +158,5 @@ if __name__ == '__main__':
     for i,clf in enumerate(clfs):
          print clf
          print 'baseline: ',sum(accuracy_bl[:,i])/float(len(accuracy_bl[:,i]))
-         print 'selftraining: ',sum(accuracy_sf[:,i])/float(len(accuracy_sf[:,i]))
-         #print 'cotraining: ',sum(accuracy_co[:,i])/float(len(accuracy_co[:,i]))
+         #print 'selftraining: ',sum(accuracy_sf[:,i])/float(len(accuracy_sf[:,i]))
+         print 'cotraining: ',sum(accuracy_co[:,i])/float(len(accuracy_co[:,i]))

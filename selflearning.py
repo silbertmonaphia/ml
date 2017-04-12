@@ -9,8 +9,11 @@ import time
 
 
 class SelfLearningModel(BaseEstimator):
+    """
+    standard Self-Training algorithm
+    """
 
-    def __init__(self, basemodel, max_iter=200, prob_threshold=0.85):
+    def __init__(self, basemodel, max_iter=200, prob_threshold=0.92):
         self.model = basemodel
         self.max_iter = max_iter
         self.prob_threshold = prob_threshold
@@ -30,7 +33,7 @@ class SelfLearningModel(BaseEstimator):
         # if y_unlabeled is equal to  y_unlabeled_old ,it infers that there is
         # no room for optimization,so return
         while (len(y_unlabeled_old) == 0 or numpy.any(y_unlabeled != y_unlabeled_old)) and i < self.max_iter:
-
+            print 'inter :',i
             y_unlabeled_old = numpy.copy(y_unlabeled)
             # uidx[tuple] is the number of the row which first or second
             # column's value is better than 0.85

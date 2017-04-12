@@ -2,14 +2,27 @@
 # encoding:utf-8
 
 import numpy as np
-from sklearn.cross_validation import StratifiedKFold
+from numpy.random import shuffle
 
 
-X_unlabeled_prime = np.arange(30).reshape(10, -1)
-print X_unlabeled_prime.size
+# l2=[1,2,3,4,5]
+# l2=np.asarray(l2)
+# l3=[0,1,2,3,4]
+# l3=np.asarray(l3)
+# s = np.arange(l2.shape[0])
 
-y_unlebeled_prime = np.array([-1,-1,-1,-1,-1,-1,-1,-1,-1,-1])
-print y_unlebeled_prime.size
+# shuffle(s)
+# l2=l2[s]
+# l3=l3[s]
+# print s
+# print l2 
+# print l3
+
+# X_unlabeled_prime = np.arange(30).reshape(10, -1)
+# print X_unlabeled_prime.size
+
+# y_unlebeled_prime = np.array([-1,-1,-1,-1,-1,-1,-1,-1,-1,-1])
+# print y_unlebeled_prime.size
 
 # p=[1,3,4,5]
 # n=[2,6,7,9]
@@ -59,3 +72,28 @@ print y_unlebeled_prime.size
 # b=[0,0,0]
 # a.extend(b)
 # print a 
+
+
+#singleton
+class singleton(type):
+    """
+    单例对象的类必须保证只有一个实例存在
+    """
+    _instance={}
+    def __call__(cls,*args,**kwargs):
+        if cls not in singleton._instance:
+            singleton._instance[cls]=type(cls,*args,**kwargs)
+        return singleton._instance[cls]
+
+class A(object):
+    """
+    __metaclass__ is used for create the class,like class is used to create instance
+    """
+    def __call__(self,*args,**kwargs):
+        print args,kwargs,'OTAKU'
+    __metaclass__= singleton
+    a=1
+a=A()
+b=A()
+print id(a)
+print id(b)
