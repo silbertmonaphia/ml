@@ -8,7 +8,6 @@ from scipy.io import arff
 from sklearn.cross_validation import StratifiedKFold  # balanced better!
 from sklearn.cross_validation import train_test_split  # not balanced
 from sklearn import metrics
-import matplotlib.pyplot as plt
 
 from sklearn.svm import SVC
 from sklearn.naive_bayes import MultinomialNB
@@ -16,6 +15,8 @@ from sklearn.tree import DecisionTreeClassifier
 
 from selflearning import SelfLearningModel
 from cotraining import CoTrainingClassifier
+
+import matplotlib.pyplot as plt
 
 
 def loadData(filepath):
@@ -34,7 +35,7 @@ def loadData(filepath):
                 y.append(0)
 
             line = list(line)
-            #pop the tag out of line
+            # pop the tag out of line
             line.pop()
             X.append(line)
 
@@ -46,17 +47,17 @@ def loadData(filepath):
 
 def cross_validation(X, y):
 
-    skf1 = StratifiedKFold(y, n_folds=4)
+    skf1 = StratifiedKFold(y, n_folds=4,shuffle=True)
     for train_index, test_index in skf1:
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
 
-        skf2 = StratifiedKFold(y_train, n_folds=75)
+        skf2 = StratifiedKFold(y_train, n_folds=75,shuffle=True)
         for unlabeled_index, labeled_index in skf2:
             X_unlabeled, X_labeled = X[unlabeled_index], X[labeled_index]
             y_unlabeled, y_labeled = y[unlabeled_index], y[labeled_index]
             break
-        #X_labeled=18 y_labeled=18 X_unlabeled=1332 X_test=450 y_test=450
+        # X_labeled=18 y_labeled=18 X_unlabeled=1332 X_test=450 y_test=450
         yield X_labeled, y_labeled, X_unlabeled, X_test, y_test
 
 
@@ -69,15 +70,10 @@ def evaluation(y_test, predict, accuracyonly=True):
     return accuracy
 
 
-def plot():
-    plt.plot([1, 2, 3, 4])
-    plt.ylabel('some numbers')
-    plt.show()
-
-
 def test_baseline(X_labeled, y_labeled, X_test, y_test):
 
-    clf_SVM = SVC(kernel='linear',probability=True)
+    clf_SVM = SVC(kernel='linear', probability=True)
+    # clf_SVM = MultinomialNB()
     print '\nstart testing baseline :/'
 
     print 'svm'
@@ -94,8 +90,8 @@ def test_selftraing(X_labeled, y_labeled, X_unlabeled, X_test, y_test):
     print '\nstart testing SSL-SelfTraining :D'
 
     # svm has to turn on probability parameter
-    print 'svm'
-    clf_SVM = SVC(kernel='linear',probability=True)
+    clf_SVM = SVC(kernel='linear', probability=True)
+    # clf_SVM = MultinomialNB()
     ssl_slm_svm = SelfLearningModel(clf_SVM)
     ssl_slm_svm.fit(X_labeled, y_labeled, X_unlabeled)
     predict = ssl_slm_svm.predict(X_test)
@@ -109,9 +105,9 @@ def test_cotraining(X_labeled, y_labeled, X_unlabeled, X_test, y_test):
     # SSL-Co-Training
     print '\nstart testing SSL-CoTraining :)'
 
-    clf_SVM = SVC(kernel='linear',probability=True)
-
-    #an object is a class with status,it has memories
+    clf_SVM = SVC(kernel='linear', probability=True)
+    # clf_SVM = MultinomialNB()
+    # an object is a class with status,it has memories
     print 'svm'
     ssl_ctc_svm = CoTrainingClassifier(clf_SVM)
     ssl_ctc_svm.fit(X_labeled, y_labeled, X_unlabeled)
@@ -135,8 +131,7 @@ if __name__ == '__main__':
     # labeled 1%,unlabeled 74%,test 25%
     cv_generator = cross_validation(X, y)
 
-
-    clf_num=len(clfs)
+    clf_num = len(clfs)
     accuracy_bl = np.zeros((0, clf_num))
     accuracy_sf = np.zeros((0, clf_num))
     accuracy_co = np.zeros((0, clf_num))
@@ -149,14 +144,13 @@ if __name__ == '__main__':
         X_labeled, y_labeled, X_unlabeled, X_test, y_test = cv_generator.next()
 
         accuracy_bl = np.vstack((accuracy_bl, np.asarray(test_baseline(X_labeled, y_labeled, X_test, y_test))))
-        #accuracy_sf = np.vstack((accuracy_sf, np.asarray(test_selftraing(X_labeled, y_labeled, X_unlabeled, X_test, y_test))))
+        accuracy_sf = np.vstack((accuracy_sf, np.asarray(test_selftraing(X_labeled, y_labeled, X_unlabeled, X_test, y_test))))
         accuracy_co = np.vstack((accuracy_co, np.asarray(test_cotraining(X_labeled, y_labeled, X_unlabeled, X_test, y_test))))
-
 
     print '\n.... final static average ....\n'
 
-    for i,clf in enumerate(clfs):
-         print clf
-         print 'baseline: ',sum(accuracy_bl[:,i])/float(len(accuracy_bl[:,i]))
-         #print 'selftraining: ',sum(accuracy_sf[:,i])/float(len(accuracy_sf[:,i]))
-         print 'cotraining: ',sum(accuracy_co[:,i])/float(len(accuracy_co[:,i]))
+    for i, clf in enumerate(clfs):
+        print clf
+        print 'baseline: ', sum(accuracy_bl[:, i]) / float(len(accuracy_bl[:, i]))
+        print 'selftraining: ', sum(accuracy_sf[:, i]) / float(len(accuracy_sf[:, i]))
+        print 'cotraining:', sum(accuracy_co[:, i]) / float(len(accuracy_co[:, i]))

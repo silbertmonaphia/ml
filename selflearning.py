@@ -46,7 +46,6 @@ class SelfLearningModel(BaseEstimator):
 
             X_unlabeled = numpy.delete(X_unlabeled, uidx, axis=0)
             y_unlabeled = numpy.delete(y_unlabeled_old, uidx, axis=0)
-            
             self.model.fit(X_labeled, y_labeled)
 
             y_unlabeled = self.model.predict(X_unlabeled)

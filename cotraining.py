@@ -7,7 +7,7 @@ import os
 
 class CoTrainingClassifier(object):
 
-    def __init__(self, clf, p=-1, n=-1, k=200, u=75,threshold=0.92):
+    def __init__(self, clf, p=-1, n=-1, k=200, u=75, threshold=0.92):
         # we will just use a copy of clf (the same kind of classifier) if clf2
         # is not specified
         self.clf1_ = clf
@@ -29,7 +29,7 @@ class CoTrainingClassifier(object):
 
         self.init_n_p(y_labeled)
         # JDMilk.arff n_=1 p_=2
-        print 'n_ is', self.n_, 'p_ is', self.p_
+        #print 'n_ is', self.n_, 'p_ is', self.p_
         assert(self.p_ > 0 and self.n_ > 0 and self.k_ > 0 and self.u_ > 0)
 
         # create y_unlabeled
@@ -55,8 +55,8 @@ class CoTrainingClassifier(object):
 
             X_train_view1 = self.dynamic_random_subspace(X_train)
             X_train_view2 = self.dynamic_random_subspace(X_train)
-            # X_train_view3 = self.dynamic_random_subspace(X_train)
-            # X_train_view4 = self.dynamic_random_subspace(X_train)
+            X_train_view3 = self.dynamic_random_subspace(X_train)
+            X_train_view4 = self.dynamic_random_subspace(X_train)
             # X_train_view5 = self.dynamic_random_subspace(X_train)
             # X_train_view6 = self.dynamic_random_subspace(X_train)
             # X_train_view7 = self.dynamic_random_subspace(X_train)
@@ -68,11 +68,11 @@ class CoTrainingClassifier(object):
             X_labeled_view2 = X_train_view2[:length, :]
             X_unlabeled_view2 = X_train_view2[length:, :]
 
-            # X_labeled_view3 = X_train_view3[:length, :]
-            # X_unlabeled_view3 = X_train_view3[length:, :]
+            X_labeled_view3 = X_train_view3[:length, :]
+            X_unlabeled_view3 = X_train_view3[length:, :]
 
-            # X_labeled_view4 = X_train_view4[:length, :]
-            # X_unlabeled_view4 = X_train_view4[length:, :]
+            X_labeled_view4 = X_train_view4[:length, :]
+            X_unlabeled_view4 = X_train_view4[length:, :]
 
             # X_labeled_view5 = X_train_view5[:length, :]
             # X_unlabeled_view5 = X_train_view5[length:, :]
@@ -86,30 +86,27 @@ class CoTrainingClassifier(object):
             # X_labeled_view8 = X_train_view8[:length, :]
             # X_unlabeled_view8 = X_train_view8[length:, :]
 
-
             print "training the clfs with labeled data(view)"
             self.clf1_.fit(X_labeled_view1, y_labeled)
             self.clf2_.fit(X_labeled_view2, y_labeled)
-            # self.clf3_.fit(X_labeled_view3, y_labeled)
-            # self.clf4_.fit(X_labeled_view4, y_labeled)
+            self.clf3_.fit(X_labeled_view3, y_labeled)
+            self.clf4_.fit(X_labeled_view4, y_labeled)
             # self.clf5_.fit(X_labeled_view5, y_labeled)
             # self.clf6_.fit(X_labeled_view6, y_labeled)
             # self.clf7_.fit(X_labeled_view7, y_labeled)
             # self.clf8_.fit(X_labeled_view8, y_labeled)
 
-
             # how to judge whether these 4 classifiers change ?
             print "predict probability"
             p1 = self.clf1_.predict_proba(X_unlabeled_view1)
             p2 = self.clf2_.predict_proba(X_unlabeled_view2)
-            # p3 = self.clf3_.predict_proba(X_unlabeled_view3)
-            # p4 = self.clf4_.predict_proba(X_unlabeled_view4)
+            p3 = self.clf3_.predict_proba(X_unlabeled_view3)
+            p4 = self.clf4_.predict_proba(X_unlabeled_view4)
             # p5 = self.clf5_.predict_proba(X_unlabeled_view5)
             # p6 = self.clf6_.predict_proba(X_unlabeled_view6)
             # p7 = self.clf7_.predict_proba(X_unlabeled_view7)
             # p8 = self.clf8_.predict_proba(X_unlabeled_view8)
-            
-            
+
             n_index, p_index = [], []
             # to get the n(or p) best negative example's index in y,and put
             # them into the list n(or p)
@@ -129,11 +126,11 @@ class CoTrainingClassifier(object):
             n_index_v2 = np.where(p2[:, 0] > self.threshold)[0]
             p_index_v2 = np.where(p2[:, 1] > self.threshold)[0]
 
-            # n_index_v3 = np.where(p3[:, 0] > self.threshold)[0]
-            # p_index_v3 = np.where(p3[:, 1] > self.threshold)[0]
+            n_index_v3 = np.where(p3[:, 0] > self.threshold)[0]
+            p_index_v3 = np.where(p3[:, 1] > self.threshold)[0]
 
-            # n_index_v4 = np.where(p4[:, 0] > self.threshold)[0]
-            # p_index_v4 = np.where(p4[:, 1] > self.threshold)[0]
+            n_index_v4 = np.where(p4[:, 0] > self.threshold)[0]
+            p_index_v4 = np.where(p4[:, 1] > self.threshold)[0]
 
             # n_index_v5 = np.where(p5[:, 0] > self.threshold)[0]
             # p_index_v5 = np.where(p5[:, 1] > self.threshold)[0]
@@ -147,19 +144,20 @@ class CoTrainingClassifier(object):
             # n_index_v8 = np.where(p8[:, 0] > self.threshold)[0]
             # p_index_v8 = np.where(p8[:, 1] > self.threshold)[0]
 
-
-
             n_index.extend(n_index_v1)
+            # duck type (although n_index_v1 is ndarray, and n_index is list, but
+            # ndarray is iterative, and list.extend() just need an iterative
+            # object as its input)
             p_index.extend(p_index_v1)
 
             n_index.extend(n_index_v2)
             p_index.extend(p_index_v2)
 
-            # n_index.extend(n_index_v3)
-            # p_index.extend(p_index_v3)
+            n_index.extend(n_index_v3)
+            p_index.extend(p_index_v3)
 
-            # n_index.extend(n_index_v4)
-            # p_index.extend(p_index_v4)
+            n_index.extend(n_index_v4)
+            p_index.extend(p_index_v4)
 
             # n_index.extend(n_index_v5)
             # p_index.extend(p_index_v5)
@@ -243,7 +241,7 @@ class CoTrainingClassifier(object):
         n = X.shape[1]
         # m means every subspace shoud include m features
         m = n / 2
-        print 'm is ',m
+        print 'm is ', m
         X_T = X.T
         shuffle(X_T)
         X_T_shuffled_T = X_T.T

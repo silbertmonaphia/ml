@@ -34,6 +34,7 @@ var/
 *.xlsx
 pip-log.txt
 *.txt
+!requirements.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
