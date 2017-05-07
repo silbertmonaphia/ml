@@ -2,7 +2,7 @@
 基于半监督学习和集成学习的情感分析研究 
 
 #二.数据  
-/JDMilk.arff[tf-idf]  
+text/JDMilk.arff[tf-idf]  
 
 --对于baseline  
 7%作为训练集
