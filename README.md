@@ -35,13 +35,14 @@ docker
 0.2朴素贝叶斯－多项式分布假设(MultinomialNB)  
 
 ##1.半监督学习(SSL)  
+
 **1.1Self-Training**  
 最原始的半监督学习算法，但是容易学坏,压根没有改善，甚至出现更加差  
 Assumption:One's own high confidence predictions are correct.  
 其主要思路是首先利用小规模的标注样本训练出一个分类器，然后对未标注样本进行分类，挑选置信度(后验概率)最高的样本进行自动标注并且更新标注集，迭代式地反复训练分类器    
 ![Self-Training](./pic/SelfTraining.png)  
 
-**1.2Co-Training(RamdomSubspaces => Views)[OK]**  
+**1.2Co-Training**  
 特点：Original(Blum & Mitshell)是针对多视图数据(网页文本和超链接)，从不同视图(角度)思考问题，基于分歧
 
 Original视图为2，分别是网站文本和超链接  
@@ -55,7 +56,7 @@ Rule#2:每个视图都能从训练样本中得到一个强分类器
 但是视图之间至少得满足'redundant but notcompletely correlated'的条件  
 因为多个视图之间应该相互独立的，如果都是全相关，那么基于多视图训练出来的分类器对相同待标记示例的标记是完全一样的，这样一来Co-Training 算法就退化成了 self-training 算法(来自高原硕士文献)  
 
-**Ramdom Subspaces:**  
+**Ramdom Subspaces**  
 最早来源于Tin Kam Ho的*The Random Subspace Method forConstructing Decision Forests*论文，for improving  weak classifiers.
 
 ①来自王娇博士文献叙述  
